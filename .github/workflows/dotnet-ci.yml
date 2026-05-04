@@ -1,0 +1,82 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  dotnet:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - name: Restore
+        run: dotnet restore .\TheUnlockerWorkspace.slnx
+      - name: Build
+        run: dotnet build .\TheUnlockerWorkspace.slnx --no-restore
+      - name: Test
+        run: dotnet test .\TheUnlocker.Tests\TheUnlocker.Tests.csproj --no-build
+      - name: Generate SDK docs
+        run: dotnet run --project .\TheUnlocker.ApiDocs.Web\TheUnlocker.ApiDocs.Web.csproj --no-build --urls http://localhost:5123
+        timeout-minutes: 1
+        continue-on-error: true
+      - name: Pack analyzers
+        run: dotnet pack .\TheUnlocker.Sdk.Analyzers\TheUnlocker.Sdk.Analyzers.csproj --no-build
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend/marketplace
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/marketplace/package-lock.json
+      - name: Install
+        run: npm ci
+      - name: Build
+        run: npm run build
+
+  rust-worker:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend/rust-worker
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check
+        run: cargo check --locked
+
+  go-api:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend/go-api
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.23"
+          cache: false
+      - name: Test
+        run: go test ./...
+
+  ruby-registry:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend/ruby-registry
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+          bundler-cache: true
+          working-directory: backend/ruby-registry
+      - name: Syntax check
+        run: ruby -c app.rb

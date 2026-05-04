@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <PackageType>Template</PackageType>
+    <PackageId>TheUnlocker.Templates</PackageId>
+    <Title>TheUnlocker dotnet new templates</Title>
+    <Description>Project templates for TheUnlocker mod authors.</Description>
+    <Authors>TheUnlocker</Authors>
+    <Version>1.1.2</Version>
+    <PackageOutputPath>artifacts\nuget</PackageOutputPath>
+    <IncludeContentInPack>true</IncludeContentInPack>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
+    <EnableDefaultNoneItems>false</EnableDefaultNoneItems>
+    <NoDefaultExcludes>true</NoDefaultExcludes>
+    <NoWarn>$(NoWarn);NU5128</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="templates\theunlocker-mod\**\*" Exclude="templates\theunlocker-mod\bin\**;templates\theunlocker-mod\obj\**" PackagePath="content\theunlocker-mod\" />
+  </ItemGroup>
+
+</Project>

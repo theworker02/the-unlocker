@@ -1,0 +1,133 @@
+name: theunlocker
+
+services:
+  frontend:
+    build:
+      context: ..
+      dockerfile: frontend/marketplace/Dockerfile
+    ports:
+      - "5173:80"
+    depends_on:
+      - ruby-registry
+      - go-api
+
+  ruby-registry:
+    build:
+      context: ..
+      dockerfile: backend/ruby-registry/Dockerfile
+    environment:
+      PORT: 4567
+      MONGO_URL: mongodb://mongo:27017/theunlocker_registry
+      REDIS_URL: redis://redis:6379/0
+      MINIO_ENDPOINT: http://minio:9000
+      DOTNET_REGISTRY_URL: http://registry-api:8080
+    ports:
+      - "4567:4567"
+    depends_on:
+      - mongo
+      - redis
+
+  go-api:
+    build:
+      context: ..
+      dockerfile: backend/go-api/Dockerfile
+    environment:
+      PORT: 8088
+      REGISTRY_BASE_URL: http://ruby-registry:4567
+      MONGO_URL: mongodb://mongo:27017/theunlocker_registry
+      MONGO_DATABASE: theunlocker_registry
+    ports:
+      - "8088:8088"
+    depends_on:
+      - ruby-registry
+
+  rust-worker:
+    build:
+      context: ..
+      dockerfile: backend/rust-worker/Dockerfile
+    environment:
+      REDIS_URL: redis://redis:6379/0
+      RUST_LOG: info
+    ports:
+      - "7070:7070"
+    depends_on:
+      - redis
+
+  registry-api:
+    build:
+      context: ..
+      dockerfile: deploy/registry-api.Dockerfile
+    environment:
+      ASPNETCORE_URLS: http://+:8080
+      Registry__StorageProvider: Mongo
+      Mongo__ConnectionString: mongodb://mongo:27017
+      Mongo__DatabaseName: theunlocker_registry
+      Mongo__RunMigrations: "true"
+      Redis__ConnectionString: redis:6379
+      Storage__Provider: MinIO
+      S3__ServiceUrl: http://minio:9000
+      S3__AccessKey: minioadmin
+      S3__SecretKey: minioadmin
+      S3__Bucket: theunlocker-packages
+    ports:
+      - "5077:8080"
+    depends_on:
+      - mongo
+      - redis
+      - minio
+
+  worker:
+    build:
+      context: ..
+      dockerfile: deploy/worker.Dockerfile
+    environment:
+      Redis__ConnectionString: redis:6379
+      Worker__ReportsDirectory: /data/reports
+      Worker__WebhookSecret: dev-webhook-secret
+      Worker__GameRoots: /fixtures/unity;/fixtures/unreal;/fixtures/minecraft
+    volumes:
+      - worker-reports:/data/reports
+    depends_on:
+      - redis
+      - registry-api
+
+  marketplace:
+    build:
+      context: ..
+      dockerfile: deploy/marketplace.Dockerfile
+    environment:
+      ASPNETCORE_URLS: http://+:8080
+      RegistryBaseUrl: http://registry-api:8080
+    ports:
+      - "5080:8080"
+    depends_on:
+      - registry-api
+
+  mongo:
+    image: mongo:7
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  minio:
+    image: minio/minio:latest
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio-data:/data
+
+volumes:
+  mongo-data:
+  minio-data:
+  worker-reports:

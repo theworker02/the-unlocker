@@ -1,0 +1,22 @@
+{
+  "mods": [
+    {
+      "id": "hello-world",
+      "name": "Hello World Mod",
+      "version": "1.1.0",
+      "description": "Sample marketplace listing for update detection and secure install testing.",
+      "downloadUrl": "https://example.com/mods/hello-world-1.1.0.zip",
+      "sha256": "OPTIONAL_PACKAGE_SHA256",
+      "permissions": [
+        "ReadAssets",
+        "AddMenuItems",
+        "SendNotifications",
+        "Settings",
+        "Events",
+        "Navigation",
+        "CommandPalette"
+      ],
+      "changelog": "Adds command palette integration and compatibility metadata."
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "name": "TheUnlocker Platform",
+  "image": "mcr.microsoft.com/devcontainers/dotnet:1-8.0-bookworm",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "22"
+    },
+    "ghcr.io/devcontainers/features/go:1": {
+      "version": "1.23"
+    },
+    "ghcr.io/devcontainers/features/ruby:1": {
+      "version": "3.3"
+    },
+    "ghcr.io/devcontainers/features/rust:1": {
+      "version": "stable"
+    },
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+  },
+  "postCreateCommand": "dotnet restore TheUnlockerWorkspace.slnx && cd frontend/marketplace && npm ci && cd ../../backend/ruby-registry && bundle install && cd ../go-api && go mod download",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-dotnettools.csharp",
+        "golang.go",
+        "rust-lang.rust-analyzer",
+        "rebornix.ruby",
+        "dbaeumer.vscode-eslint"
+      ]
+    }
+  }
+}

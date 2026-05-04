@@ -1,0 +1,66 @@
+{
+  "id": "hello-world",
+  "name": "Hello World Mod",
+  "version": "1.0.0",
+  "author": "The Unlocker",
+  "description": "A sample mod that demonstrates settings, notifications, asset registration, and menu items.",
+  "entryDll": "SampleMod.dll",
+  "minimumAppVersion": "1.0.0",
+  "minimumFrameworkVersion": "8.0.0",
+  "sdkVersion": "1.0.0",
+  "dependsOn": [],
+  "dependencies": [
+    {
+      "id": "optional-ui-helper",
+      "versionRange": ">=1.0.0 <2.0.0",
+      "optional": true
+    }
+  ],
+  "permissions": [
+    "ReadAssets",
+    "AddMenuItems",
+    "SendNotifications",
+    "Settings",
+    "Events",
+    "Navigation",
+    "AssetImporters",
+    "Themes",
+    "CommandPalette",
+    "ToolPanels"
+  ],
+  "targets": [
+    "MainMenu",
+    "AssetBrowser"
+  ],
+  "eventSchemas": [
+    "sample.message"
+  ],
+  "commandScopes": {
+    "Sample Command": [
+      "local"
+    ]
+  },
+  "settings": {
+    "greeting": {
+      "label": "Greeting",
+      "type": "text",
+      "defaultValue": "Hello from the sample mod."
+    },
+    "showNotification": {
+      "label": "Show Notification",
+      "type": "boolean",
+      "defaultValue": "true"
+    },
+    "theme": {
+      "label": "Theme",
+      "type": "select",
+      "defaultValue": "Classic",
+      "options": [
+        "Classic",
+        "Compact",
+        "High Contrast"
+      ]
+    }
+  },
+  "publisherId": "local-samples"
+}

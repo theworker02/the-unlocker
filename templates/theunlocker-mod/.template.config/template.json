@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "The Unlocker",
+  "classifications": [
+    "TheUnlocker",
+    "Mod"
+  ],
+  "identity": "TheUnlocker.Mod.Template",
+  "name": "The Unlocker Mod",
+  "shortName": "theunlocker-mod",
+  "sourceName": "SampleUnlockerMod",
+  "preferNameDirectory": true,
+  "tags": {
+    "language": "C#",
+    "type": "project"
+  }
+}

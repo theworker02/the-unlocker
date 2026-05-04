@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://theunlocker.dev/schemas/mod.schema.json",
+  "title": "TheUnlocker Mod Manifest",
+  "type": "object",
+  "required": ["id", "name", "version", "entryDll"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9.-]*$" },
+    "name": { "type": "string" },
+    "version": { "type": "string" },
+    "author": { "type": "string" },
+    "description": { "type": "string" },
+    "entryDll": { "type": "string" },
+    "sdkVersion": { "type": "string" },
+    "dependsOn": { "type": "array", "items": { "type": "string" } },
+    "dependencies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id"],
+        "properties": {
+          "id": { "type": "string" },
+          "versionRange": { "type": "string" },
+          "optional": { "type": "boolean" }
+        }
+      }
+    },
+    "permissions": { "type": "array", "items": { "type": "string" } },
+    "targets": { "type": "array", "items": { "type": "string" } },
+    "settings": { "type": "object" },
+    "publisherId": { "type": "string" },
+    "trustLevel": { "type": "string" },
+    "isolationMode": { "type": "string", "enum": ["InProcess", "OutOfProcess"] }
+  }
+}

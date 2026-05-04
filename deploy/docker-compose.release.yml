@@ -1,0 +1,198 @@
+name: theunlocker
+
+services:
+  ui:
+    container_name: theunlocker-ui
+    build:
+      context: ..
+      dockerfile: frontend/marketplace/Dockerfile
+    ports:
+      - "${THEUNLOCKER_UI_PORT:-8080}:80"
+    depends_on:
+      go-api:
+        condition: service_healthy
+      ruby-registry:
+        condition: service_started
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost/ >/dev/null 2>&1"]
+      interval: 20s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+    restart: unless-stopped
+
+  go-api:
+    container_name: theunlocker-go-api
+    build:
+      context: ..
+      dockerfile: backend/go-api/Dockerfile
+    environment:
+      PORT: 8088
+      REGISTRY_BASE_URL: http://ruby-registry:4567
+      MONGO_URL: mongodb://mongo:27017/theunlocker_registry
+      MONGO_DATABASE: theunlocker_registry
+    ports:
+      - "${THEUNLOCKER_GO_API_PORT:-8088}:8088"
+    depends_on:
+      mongo:
+        condition: service_started
+      redis:
+        condition: service_started
+      ruby-registry:
+        condition: service_started
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8088/api/v1/health >/dev/null 2>&1"]
+      interval: 20s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+    restart: unless-stopped
+
+  ruby-registry:
+    container_name: theunlocker-ruby-registry
+    build:
+      context: ..
+      dockerfile: backend/ruby-registry/Dockerfile
+    environment:
+      PORT: 4567
+      RACK_ENV: production
+      MONGO_URL: mongodb://mongo:27017/theunlocker_registry
+      REDIS_URL: redis://redis:6379/0
+      MINIO_ENDPOINT: http://minio:9000
+      MINIO_ACCESS_KEY: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD:-minioadmin}
+      DOTNET_REGISTRY_URL: http://registry-api:8080
+    ports:
+      - "${THEUNLOCKER_RUBY_PORT:-4567}:4567"
+    depends_on:
+      mongo:
+        condition: service_started
+      redis:
+        condition: service_started
+      minio:
+        condition: service_started
+    restart: unless-stopped
+
+  registry-api:
+    container_name: theunlocker-registry-api
+    build:
+      context: ..
+      dockerfile: deploy/registry-api.Dockerfile
+    environment:
+      ASPNETCORE_URLS: http://+:8080
+      ASPNETCORE_ENVIRONMENT: Production
+      Registry__StorageProvider: Mongo
+      Mongo__ConnectionString: mongodb://mongo:27017
+      Mongo__DatabaseName: theunlocker_registry
+      Mongo__RunMigrations: "true"
+      Redis__ConnectionString: redis:6379
+      Storage__Provider: MinIO
+      S3__ServiceUrl: http://minio:9000
+      S3__AccessKey: ${MINIO_ROOT_USER:-minioadmin}
+      S3__SecretKey: ${MINIO_ROOT_PASSWORD:-minioadmin}
+      S3__Bucket: theunlocker-packages
+    ports:
+      - "${THEUNLOCKER_REGISTRY_API_PORT:-5077}:8080"
+    depends_on:
+      mongo:
+        condition: service_started
+      redis:
+        condition: service_started
+      minio:
+        condition: service_started
+    restart: unless-stopped
+
+  registry-worker:
+    container_name: theunlocker-registry-worker
+    build:
+      context: ..
+      dockerfile: deploy/worker.Dockerfile
+    environment:
+      Redis__ConnectionString: redis:6379
+      Worker__ReportsDirectory: /data/reports
+      Worker__WebhookSecret: ${THEUNLOCKER_WEBHOOK_SECRET:-change-me-release-webhook-secret}
+      Worker__GameRoots: /fixtures/unity;/fixtures/unreal;/fixtures/minecraft
+    volumes:
+      - worker-reports:/data/reports
+    depends_on:
+      redis:
+        condition: service_started
+      registry-api:
+        condition: service_started
+    restart: unless-stopped
+
+  rust-worker:
+    container_name: theunlocker-rust-worker
+    build:
+      context: ..
+      dockerfile: backend/rust-worker/Dockerfile
+    environment:
+      REDIS_URL: redis://redis:6379/0
+      RUST_LOG: info
+    ports:
+      - "${THEUNLOCKER_RUST_WORKER_PORT:-7070}:7070"
+    depends_on:
+      redis:
+        condition: service_started
+    restart: unless-stopped
+
+  legacy-marketplace:
+    container_name: theunlocker-legacy-marketplace
+    profiles:
+      - legacy-ui
+    build:
+      context: ..
+      dockerfile: deploy/marketplace.Dockerfile
+    environment:
+      ASPNETCORE_URLS: http://+:8080
+      ASPNETCORE_ENVIRONMENT: Production
+      RegistryBaseUrl: http://registry-api:8080
+    ports:
+      - "${THEUNLOCKER_LEGACY_UI_PORT:-5080}:8080"
+    depends_on:
+      registry-api:
+        condition: service_started
+    restart: unless-stopped
+
+  mongo:
+    container_name: theunlocker-mongo
+    image: mongo:7
+    ports:
+      - "${THEUNLOCKER_MONGO_PORT:-27017}:27017"
+    volumes:
+      - mongo-data:/data/db
+    restart: unless-stopped
+
+  redis:
+    container_name: theunlocker-redis
+    image: redis:7-alpine
+    ports:
+      - "${THEUNLOCKER_REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 20s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  minio:
+    container_name: theunlocker-minio
+    image: minio/minio:latest
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
+    ports:
+      - "${THEUNLOCKER_MINIO_API_PORT:-9000}:9000"
+      - "${THEUNLOCKER_MINIO_CONSOLE_PORT:-9001}:9001"
+    volumes:
+      - minio-data:/data
+    restart: unless-stopped
+
+volumes:
+  mongo-data:
+  redis-data:
+  minio-data:
+  worker-reports:

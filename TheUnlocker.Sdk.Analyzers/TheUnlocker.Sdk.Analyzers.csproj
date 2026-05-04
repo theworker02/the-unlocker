@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+    <NoWarn>$(NoWarn);RS2008</NoWarn>
+    <PackageId>TheUnlocker.Sdk.Analyzers</PackageId>
+    <Title>TheUnlocker SDK Analyzers</Title>
+    <Description>Roslyn analyzers and code fixes for TheUnlocker mod authors.</Description>
+    <Authors>TheUnlocker</Authors>
+    <Version>1.1.2</Version>
+    <PackageOutputPath>..\artifacts\nuget</PackageOutputPath>
+    <IncludeBuildOutput>true</IncludeBuildOutput>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.10.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="4.10.0" />
+    <PackageReference Include="System.Composition.AttributedModel" Version="8.0.0" />
+  </ItemGroup>
+
+</Project>

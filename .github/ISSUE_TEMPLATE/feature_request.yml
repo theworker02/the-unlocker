@@ -1,0 +1,42 @@
+name: Feature Request
+description: Suggest a cooperative modding feature.
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What should The Unlocker support?
+    validations:
+      required: true
+  - type: textarea
+    id: use-case
+    attributes:
+      label: Use case
+      description: Who benefits and what workflow gets better?
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Desktop app
+        - Marketplace frontend
+        - Go API gateway
+        - Registry backend
+        - Worker services
+        - Mod SDK/runtime
+        - CLI/templates
+        - Documentation
+        - Security/trust model
+    validations:
+      required: true
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Safety boundary
+      options:
+        - label: This request uses cooperative SDK/registry/desktop extension points and is not a bypass request.
+          required: true

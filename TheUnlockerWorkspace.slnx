@@ -1,0 +1,48 @@
+<Solution>
+  <Folder Name="/examples/" />
+  <Folder Name="/examples/asset-importer-mod/">
+    <Project Path="examples/asset-importer-mod/AssetImporterMod.csproj" />
+  </Folder>
+  <Folder Name="/examples/command-mod/">
+    <Project Path="examples/command-mod/CommandMod.csproj" />
+  </Folder>
+  <Folder Name="/examples/event-mod/">
+    <Project Path="examples/event-mod/EventMod.csproj" />
+  </Folder>
+  <Folder Name="/examples/menu-item-mod/">
+    <Project Path="examples/menu-item-mod/MenuItemMod.csproj" />
+  </Folder>
+  <Folder Name="/examples/migration-mod/">
+    <Project Path="examples/migration-mod/MigrationMod.csproj" />
+  </Folder>
+  <Folder Name="/examples/permissions-mod/">
+    <Project Path="examples/permissions-mod/PermissionsMod.csproj" />
+  </Folder>
+  <Folder Name="/examples/settings-mod/">
+    <Project Path="examples/settings-mod/SettingsMod.csproj" />
+  </Folder>
+  <Folder Name="/examples/theme-mod/">
+    <Project Path="examples/theme-mod/ThemeMod.csproj" />
+  </Folder>
+  <Folder Name="/examples/tool-panel-mod/">
+    <Project Path="examples/tool-panel-mod/ToolPanelMod.csproj" />
+  </Folder>
+  <Project Path="SampleMod/SampleMod.csproj" />
+  <Project Path="TheUnlocker.Adapter.Minecraft/TheUnlocker.Adapter.Minecraft.csproj" />
+  <Project Path="TheUnlocker.Adapter.TestKit/TheUnlocker.Adapter.TestKit.csproj" />
+  <Project Path="TheUnlocker.Adapter.Unity/TheUnlocker.Adapter.Unity.csproj" />
+  <Project Path="TheUnlocker.Adapter.Unreal/TheUnlocker.Adapter.Unreal.csproj" />
+  <Project Path="TheUnlocker.ApiDocs.Web/TheUnlocker.ApiDocs.Web.csproj" />
+  <Project Path="TheUnlocker.GameAdapters.Abstractions/TheUnlocker.GameAdapters.Abstractions.csproj" />
+  <Project Path="TheUnlocker.Marketplace.Web/TheUnlocker.Marketplace.Web.csproj" />
+  <Project Path="TheUnlocker.Modding.Abstractions/TheUnlocker.Modding.Abstractions.csproj" />
+  <Project Path="TheUnlocker.Modding.Runtime/TheUnlocker.Modding.Runtime.csproj" />
+  <Project Path="TheUnlocker.Modding.TestHarness/TheUnlocker.Modding.TestHarness.csproj" />
+  <Project Path="TheUnlocker.ModPackager/TheUnlocker.ModPackager.csproj" />
+  <Project Path="TheUnlocker.Registry.Server/TheUnlocker.Registry.Server.csproj" />
+  <Project Path="TheUnlocker.Registry.Worker/TheUnlocker.Registry.Worker.csproj" />
+  <Project Path="TheUnlocker.Sdk.Analyzers/TheUnlocker.Sdk.Analyzers.csproj" />
+  <Project Path="TheUnlocker.Templates.csproj" />
+  <Project Path="TheUnlocker.Tests/TheUnlocker.Tests.csproj" />
+  <Project Path="TheUnlocker/TheUnlocker.csproj" />
+</Solution>

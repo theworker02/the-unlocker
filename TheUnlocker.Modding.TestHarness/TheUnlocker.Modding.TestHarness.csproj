@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\TheUnlocker.Modding.Abstractions\TheUnlocker.Modding.Abstractions.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <PackageId>TheUnlocker.Modding.TestHarness</PackageId>
+    <Title>TheUnlocker Modding Test Harness</Title>
+    <Description>Fake mod context and lifecycle helpers for testing TheUnlocker mods.</Description>
+    <Authors>TheUnlocker</Authors>
+    <Version>1.1.2</Version>
+    <PackageOutputPath>..\artifacts\nuget</PackageOutputPath>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
+</Project>

@@ -1,0 +1,11 @@
+{
+  "id": "sample-unlocker-mod",
+  "name": "Sample Unlocker Mod",
+  "version": "1.0.0",
+  "author": "Your Name",
+  "description": "A The Unlocker mod.",
+  "entryDll": "SampleUnlockerMod.dll",
+  "sdkVersion": "1.0.0",
+  "permissions": [],
+  "settings": {}
+}

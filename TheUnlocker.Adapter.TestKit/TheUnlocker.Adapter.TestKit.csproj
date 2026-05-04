@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\TheUnlocker.GameAdapters.Abstractions\TheUnlocker.GameAdapters.Abstractions.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <PackageId>TheUnlocker.Adapter.TestKit</PackageId>
+    <Title>TheUnlocker Adapter Test Kit</Title>
+    <Description>Fixture builders and validation helpers for TheUnlocker game adapter authors.</Description>
+    <Authors>TheUnlocker</Authors>
+    <Version>1.1.2</Version>
+    <PackageOutputPath>..\artifacts\nuget</PackageOutputPath>
+  </PropertyGroup>
+
+</Project>

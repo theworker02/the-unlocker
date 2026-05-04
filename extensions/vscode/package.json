@@ -1,0 +1,31 @@
+{
+  "name": "theunlocker-mod-tools",
+  "displayName": "TheUnlocker Mod Tools",
+  "version": "1.1.2",
+  "publisher": "theunlocker",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": ["Other"],
+  "contributes": {
+    "commands": [
+      { "command": "theunlocker.init", "title": "TheUnlocker: Init Mod" },
+      { "command": "theunlocker.validate", "title": "TheUnlocker: Validate Manifest" },
+      { "command": "theunlocker.package", "title": "TheUnlocker: Package Mod" },
+      { "command": "theunlocker.sign", "title": "TheUnlocker: Sign Mod" },
+      { "command": "theunlocker.publish", "title": "TheUnlocker: Publish Mod" }
+    ],
+    "jsonValidation": [
+      {
+        "fileMatch": ["mod.json"],
+        "url": "../../schemas/mod.schema.json"
+      }
+    ]
+  },
+  "activationEvents": [
+    "onCommand:theunlocker.init",
+    "onCommand:theunlocker.validate",
+    "onCommand:theunlocker.package"
+  ],
+  "main": "./extension.js"
+}

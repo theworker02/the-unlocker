@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <PackageId>TheUnlocker.Modding.Abstractions</PackageId>
+    <Title>TheUnlocker Modding Abstractions</Title>
+    <Description>Stable SDK contracts for TheUnlocker mod authors.</Description>
+    <Authors>TheUnlocker</Authors>
+    <Version>1.1.2</Version>
+    <PackageOutputPath>..\artifacts\nuget</PackageOutputPath>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
+</Project>

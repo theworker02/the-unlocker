@@ -1,0 +1,49 @@
+<Window x:Class="TheUnlocker.FirstRunWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="The Unlocker Setup"
+        Height="420"
+        Width="640"
+        WindowStartupLocation="CenterOwner"
+        Background="#F5F7FA">
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <StackPanel>
+            <TextBlock Text="Set Up The Unlocker"
+                       FontSize="26"
+                       FontWeight="SemiBold"
+                       Foreground="#111827" />
+            <TextBlock Text="Choose the first safe defaults for mod folders, registry access, and trust policy."
+                       Margin="0,6,0,0"
+                       Foreground="#4B5563"
+                       TextWrapping="Wrap" />
+        </StackPanel>
+        <StackPanel Grid.Row="1"
+                    Margin="0,24,0,0">
+            <TextBlock Text="Mods folder" FontWeight="SemiBold" />
+            <TextBox x:Name="ModsFolderBox" Margin="0,6,0,14" />
+            <TextBlock Text="Registry URL" FontWeight="SemiBold" />
+            <TextBox x:Name="RegistryUrlBox" Margin="0,6,0,14" Text="http://localhost:5077" />
+            <CheckBox x:Name="SafeModeBox" Content="Start in safe mode" Margin="0,4,0,0" />
+            <CheckBox x:Name="UnsignedBox" Content="Allow unsigned local developer mods" Margin="0,8,0,0" IsChecked="True" />
+        </StackPanel>
+        <StackPanel Grid.Row="2"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right">
+            <Button Width="100"
+                    Height="34"
+                    Margin="0,0,10,0"
+                    Content="Cancel"
+                    IsCancel="True" />
+            <Button Width="120"
+                    Height="34"
+                    Content="Save Setup"
+                    IsDefault="True"
+                    Click="OnSave" />
+        </StackPanel>
+    </Grid>
+</Window>

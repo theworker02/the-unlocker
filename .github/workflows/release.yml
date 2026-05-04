@@ -1,0 +1,42 @@
+name: release
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  package:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - name: Restore
+        run: dotnet restore .\TheUnlockerWorkspace.slnx
+      - name: Publish desktop
+        run: dotnet publish .\TheUnlocker\TheUnlocker.csproj -c Release -r win-x64 --self-contained false -o artifacts\desktop
+      - name: Pack templates
+        run: dotnet pack .\TheUnlocker.Templates.csproj -c Release -o artifacts\nuget
+      - name: Pack analyzers
+        run: dotnet pack .\TheUnlocker.Sdk.Analyzers\TheUnlocker.Sdk.Analyzers.csproj -c Release -o artifacts\nuget
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: theunlocker-windows-and-nuget
+          path: artifacts
+
+  images:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build frontend image
+        run: docker build -f frontend/marketplace/Dockerfile -t theunlocker-marketplace:${{ github.ref_name }} .
+      - name: Build Go API image
+        run: docker build -f backend/go-api/Dockerfile -t theunlocker-go-api:${{ github.ref_name }} .
+      - name: Build Ruby registry image
+        run: docker build -f backend/ruby-registry/Dockerfile -t theunlocker-ruby-registry:${{ github.ref_name }} .
+      - name: Build Rust worker image
+        run: docker build -f backend/rust-worker/Dockerfile -t theunlocker-rust-worker:${{ github.ref_name }} .

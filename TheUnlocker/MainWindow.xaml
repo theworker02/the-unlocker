@@ -1,0 +1,799 @@
+<Window x:Class="TheUnlocker.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="The Unlocker - Content Manager"
+        Height="620"
+        MinHeight="480"
+        Width="1080"
+        MinWidth="780"
+        Background="#F5F7FA">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+    </Window.Resources>
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <DockPanel Grid.Row="0" LastChildFill="False">
+            <StackPanel DockPanel.Dock="Left">
+                <TextBlock Text="Content Manager"
+                           FontSize="28"
+                           FontWeight="SemiBold"
+                           Foreground="#1F2937" />
+                <TextBlock Text="Local asset modules and safe code mods discovered at runtime"
+                           Margin="0,4,0,0"
+                           Foreground="#4B5563" />
+            </StackPanel>
+
+            <Button DockPanel.Dock="Right"
+                    Width="110"
+                    Height="36"
+                    Margin="16,4,0,0"
+                    Command="{Binding RefreshCommand}"
+                    Content="Refresh" />
+            <Button DockPanel.Dock="Right"
+                    Width="110"
+                    Height="36"
+                    Margin="16,4,0,0"
+                    Command="{Binding ImportModCommand}"
+                    Content="Import Mod" />
+            <Button DockPanel.Dock="Right"
+                    Width="110"
+                    Height="36"
+                    Margin="16,4,0,0"
+                    Command="{Binding SaveProfileCommand}"
+                    Content="Save Profile" />
+            <Button DockPanel.Dock="Right"
+                    Width="130"
+                    Height="36"
+                    Margin="16,4,0,0"
+                    Command="{Binding ExportDiagnosticsCommand}"
+                    Content="Diagnostics" />
+            <Button DockPanel.Dock="Right"
+                    Width="150"
+                    Height="36"
+                    Margin="16,4,0,0"
+                    Command="{Binding ExportCompatibilityReportCommand}"
+                    Content="Compatibility" />
+            <Button DockPanel.Dock="Right"
+                    Width="120"
+                    Height="36"
+                    Margin="16,4,0,0"
+                    Command="{Binding ExportGraphCommand}"
+                    Content="Graph" />
+            <ComboBox DockPanel.Dock="Right"
+                      Width="150"
+                      Height="36"
+                      Margin="16,4,0,0"
+                      IsEditable="True"
+                      ItemsSource="{Binding Profiles}"
+                      SelectedItem="{Binding SelectedProfile, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        </DockPanel>
+
+        <Border Grid.Row="1"
+                Margin="0,20,0,16"
+                Padding="16"
+                Background="White"
+                BorderBrush="#D9E1EA"
+                BorderThickness="1"
+                CornerRadius="6">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="Discovery Status"
+                               FontWeight="SemiBold"
+                               Foreground="#111827" />
+                    <TextBlock Text="{Binding StatusMessage}"
+                               Margin="0,6,0,0"
+                               Foreground="#374151" />
+                </StackPanel>
+
+                <StackPanel Grid.Column="1"
+                            Margin="16,0,0,0">
+                    <TextBlock Text="Proxy Gate"
+                               FontWeight="SemiBold"
+                               Foreground="#111827" />
+                    <TextBlock Text="{Binding FeatureGateMessage}"
+                               Margin="0,6,0,0"
+                               TextWrapping="Wrap"
+                               Foreground="#374151" />
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <TabControl Grid.Row="2"
+                    AllowDrop="True"
+                    Drop="OnModDrop"
+                    Background="Transparent"
+                    BorderBrush="#D9E1EA">
+            <TabItem Header="Asset Modules">
+                <DataGrid ItemsSource="{Binding Modules}"
+                          AutoGenerateColumns="False"
+                          IsReadOnly="False"
+                          CanUserAddRows="False"
+                          CanUserDeleteRows="False"
+                          HeadersVisibility="Column"
+                          GridLinesVisibility="Horizontal"
+                          Background="White"
+                          BorderBrush="#D9E1EA"
+                          BorderThickness="1"
+                          RowHeaderWidth="0">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Name"
+                                            Binding="{Binding Name}"
+                                            IsReadOnly="True"
+                                            Width="1.6*" />
+                        <DataGridTextColumn Header="ID"
+                                            Binding="{Binding Id}"
+                                            IsReadOnly="True"
+                                            Width="1.2*" />
+                        <DataGridTextColumn Header="Version"
+                                            Binding="{Binding Version}"
+                                            IsReadOnly="True"
+                                            Width="90" />
+                        <DataGridTextColumn Header="Status"
+                                            Binding="{Binding Status}"
+                                            IsReadOnly="True"
+                                            Width="110" />
+                        <DataGridCheckBoxColumn Header="Active"
+                                                Binding="{Binding IsEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                Width="80" />
+                        <DataGridTextColumn Header="Issue"
+                                            Binding="{Binding ErrorMessage}"
+                                            IsReadOnly="True"
+                                            Width="2*" />
+                        <DataGridTextColumn Header="Path"
+                                            Binding="{Binding Path}"
+                                            IsReadOnly="True"
+                                            Width="2*" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+
+            <TabItem Header="Code Mods">
+                <Grid Background="White">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="2*" />
+                        <RowDefinition Height="120" />
+                        <RowDefinition Height="100" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0"
+                               Margin="12"
+                               Text="{Binding ModStatusMessage}"
+                               Foreground="#374151" />
+
+                    <DataGrid Grid.Row="1"
+                              ItemsSource="{Binding LoadedMods}"
+                              SelectedItem="{Binding SelectedLoadedMod, Mode=TwoWay}"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="False"
+                              CanUserAddRows="False"
+                              CanUserDeleteRows="False"
+                              HeadersVisibility="Column"
+                              GridLinesVisibility="Horizontal"
+                              Background="White"
+                              BorderBrush="#D9E1EA"
+                              BorderThickness="1"
+                              RowHeaderWidth="0">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Name"
+                                                Binding="{Binding Name}"
+                                                IsReadOnly="True"
+                                                Width="1.4*" />
+                            <DataGridTextColumn Header="ID"
+                                                Binding="{Binding Id}"
+                                                IsReadOnly="True"
+                                                Width="1.2*" />
+                            <DataGridTextColumn Header="Version"
+                                                Binding="{Binding Version}"
+                                                IsReadOnly="True"
+                                                Width="90" />
+                            <DataGridTextColumn Header="Author"
+                                                Binding="{Binding Author}"
+                                                IsReadOnly="True"
+                                                Width="120" />
+                            <DataGridTextColumn Header="Status"
+                                                Binding="{Binding Status}"
+                                                IsReadOnly="True"
+                                                Width="110" />
+                            <DataGridCheckBoxColumn Header="Enabled"
+                                                    Binding="{Binding IsEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                    Width="80" />
+                            <DataGridTextColumn Header="Signature"
+                                                Binding="{Binding SignatureStatus}"
+                                                IsReadOnly="True"
+                                                Width="140" />
+                            <DataGridTextColumn Header="Dependencies"
+                                                Binding="{Binding Dependencies}"
+                                                IsReadOnly="True"
+                                                Width="160" />
+                            <DataGridTextColumn Header="Permissions"
+                                                Binding="{Binding Permissions}"
+                                                IsReadOnly="True"
+                                                Width="180" />
+                            <DataGridTextColumn Header="Settings"
+                                                Binding="{Binding Settings}"
+                                                IsReadOnly="True"
+                                                Width="160" />
+                            <DataGridTextColumn Header="Message"
+                                                Binding="{Binding Message}"
+                                                IsReadOnly="True"
+                                                Width="2*" />
+                            <DataGridTextColumn Header="Assembly"
+                                                Binding="{Binding AssemblyPath}"
+                                                IsReadOnly="True"
+                                                Width="2*" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <DataGrid Grid.Row="2"
+                              ItemsSource="{Binding ModSettings}"
+                              AutoGenerateColumns="False"
+                              CanUserAddRows="False"
+                              CanUserDeleteRows="False"
+                              HeadersVisibility="Column"
+                              GridLinesVisibility="Horizontal"
+                              Background="White"
+                              BorderBrush="#D9E1EA"
+                              BorderThickness="1"
+                              RowHeaderWidth="0"
+                              Margin="0,12,0,0">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Mod"
+                                                Binding="{Binding ModId}"
+                                                IsReadOnly="True"
+                                                Width="1.2*" />
+                            <DataGridTextColumn Header="Setting"
+                                                Binding="{Binding Label}"
+                                                IsReadOnly="True"
+                                                Width="1.4*" />
+                            <DataGridTextColumn Header="Type"
+                                                Binding="{Binding Type}"
+                                                IsReadOnly="True"
+                                                Width="90" />
+                            <DataGridTemplateColumn Header="Value"
+                                                    Width="2*">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Grid>
+                                            <TextBox Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                                     Visibility="{Binding UsesTextBox, Converter={StaticResource BoolToVisibility}}" />
+                                            <CheckBox IsChecked="{Binding BooleanValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                      HorizontalAlignment="Left"
+                                                      VerticalAlignment="Center"
+                                                      Visibility="{Binding IsBoolean, Converter={StaticResource BoolToVisibility}}" />
+                                            <ComboBox ItemsSource="{Binding Options}"
+                                                      SelectedItem="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                      Visibility="{Binding IsSelect, Converter={StaticResource BoolToVisibility}}" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <ListBox Grid.Row="3"
+                             ItemsSource="{Binding ModLogs}"
+                             Margin="0,12,0,0"
+                             BorderBrush="#D9E1EA"
+                             Foreground="#374151" />
+                </Grid>
+            </TabItem>
+            <TabItem Header="Logs">
+                <DataGrid ItemsSource="{Binding LogEntries}"
+                          AutoGenerateColumns="False"
+                          IsReadOnly="True"
+                          CanUserAddRows="False"
+                          HeadersVisibility="Column"
+                          Background="White"
+                          RowHeaderWidth="0">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Time" Binding="{Binding Timestamp}" Width="160" />
+                        <DataGridTextColumn Header="Mod" Binding="{Binding ModId}" Width="140" />
+                        <DataGridTextColumn Header="Severity" Binding="{Binding Severity}" Width="100" />
+                        <DataGridTextColumn Header="Event" Binding="{Binding EventType}" Width="120" />
+                        <DataGridTextColumn Header="Message" Binding="{Binding Message}" Width="3*" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+            <TabItem Header="Load Order">
+                <DataGrid ItemsSource="{Binding LoadOrder}"
+                          AutoGenerateColumns="False"
+                          IsReadOnly="True"
+                          CanUserAddRows="False"
+                          HeadersVisibility="Column"
+                          Background="White"
+                          RowHeaderWidth="0">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="#"
+                                            Binding="{Binding Order}"
+                                            Width="70" />
+                        <DataGridTextColumn Header="Mod"
+                                            Binding="{Binding ModId}"
+                                            Width="1.2*" />
+                        <DataGridTextColumn Header="Reason"
+                                            Binding="{Binding Reason}"
+                                            Width="3*" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+            <TabItem Header="Conflicts">
+                <DataGrid ItemsSource="{Binding Conflicts}"
+                          AutoGenerateColumns="False"
+                          IsReadOnly="True"
+                          CanUserAddRows="False"
+                          HeadersVisibility="Column"
+                          Background="White"
+                          RowHeaderWidth="0">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Target"
+                                            Binding="{Binding Target}"
+                                            Width="1.2*" />
+                        <DataGridTextColumn Header="Mods"
+                                            Binding="{Binding ModIds}"
+                                            Width="3*" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+            <TabItem Header="Updates">
+                <Grid Background="White">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                <DataGrid Grid.Row="0"
+                          ItemsSource="{Binding Updates}"
+                          SelectedItem="{Binding SelectedUpdate, Mode=TwoWay}"
+                          AutoGenerateColumns="False"
+                          IsReadOnly="True"
+                          CanUserAddRows="False"
+                          HeadersVisibility="Column"
+                          Background="White"
+                          RowHeaderWidth="0">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Mod"
+                                            Binding="{Binding ModId}"
+                                            Width="1.2*" />
+                        <DataGridTextColumn Header="Installed"
+                                            Binding="{Binding InstalledVersion}"
+                                            Width="120" />
+                        <DataGridTextColumn Header="Available"
+                                            Binding="{Binding AvailableVersion}"
+                                            Width="120" />
+                        <DataGridTextColumn Header="Download"
+                                            Binding="{Binding DownloadUrl}"
+                                            Width="3*" />
+                        <DataGridTextColumn Header="New Permissions"
+                                            Binding="{Binding NewPermissions}"
+                                            Width="1.5*" />
+                        <DataGridTextColumn Header="Changelog"
+                                            Binding="{Binding Changelog}"
+                                            Width="2*" />
+                    </DataGrid.Columns>
+                </DataGrid>
+                    <Button Grid.Row="1"
+                            Width="150"
+                            Height="34"
+                            Margin="0,12,0,0"
+                            HorizontalAlignment="Right"
+                            Command="{Binding InstallUpdateCommand}"
+                            Content="Install Update" />
+                </Grid>
+            </TabItem>
+            <TabItem Header="Marketplace">
+                <Grid Background="White">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <DataGrid Grid.Row="0"
+                              ItemsSource="{Binding Marketplace}"
+                              SelectedItem="{Binding SelectedMarketplaceMod, Mode=TwoWay}"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              CanUserAddRows="False"
+                              HeadersVisibility="Column"
+                              Background="White"
+                              RowHeaderWidth="0">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Preview"
+                                                Binding="{Binding Description}"
+                                                Width="1.6*" />
+                            <DataGridTextColumn Header="Name"
+                                                Binding="{Binding Name}"
+                                                Width="1.4*" />
+                            <DataGridTextColumn Header="ID"
+                                                Binding="{Binding Id}"
+                                                Width="1.2*" />
+                            <DataGridTextColumn Header="Version"
+                                                Binding="{Binding Version}"
+                                                Width="100" />
+                            <DataGridTextColumn Header="Description"
+                                                Binding="{Binding Description}"
+                                                Width="2*" />
+                            <DataGridTextColumn Header="Download"
+                                                Binding="{Binding DownloadUrl}"
+                                                Width="2*" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <Button Grid.Row="1"
+                            Width="150"
+                            Height="34"
+                            Margin="0,12,0,0"
+                            HorizontalAlignment="Right"
+                            Command="{Binding InstallMarketplaceModCommand}"
+                            Content="Install Selected" />
+                </Grid>
+            </TabItem>
+            <TabItem Header="Authoring">
+                <StackPanel Background="White"
+                            Margin="12">
+                    <TextBlock Text="Authoring Tools"
+                               FontSize="18"
+                               FontWeight="SemiBold"
+                               Foreground="#111827" />
+                    <TextBlock Margin="0,8,0,0"
+                               Text="Use TheUnlocker.ModPackager as unlocker-mod: init, validate, package, sign, keys, publish."
+                               Foreground="#374151"
+                               TextWrapping="Wrap" />
+                    <Button Width="170"
+                            Height="34"
+                            Margin="0,14,0,0"
+                            HorizontalAlignment="Left"
+                            Command="{Binding GenerateModDocsCommand}"
+                            Content="Generate Mod Docs" />
+                </StackPanel>
+            </TabItem>
+            <TabItem Header="Platform">
+                <Grid Background="White">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <GroupBox Header="Notifications"
+                              Grid.Row="0"
+                              Grid.Column="0"
+                              Margin="8">
+                        <DataGrid ItemsSource="{Binding Notifications}"
+                                  AutoGenerateColumns="False"
+                                  IsReadOnly="True"
+                                  CanUserAddRows="False"
+                                  HeadersVisibility="Column"
+                                  RowHeaderWidth="0">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Severity" Binding="{Binding Severity}" Width="90" />
+                                <DataGridTextColumn Header="Source" Binding="{Binding Source}" Width="120" />
+                                <DataGridTextColumn Header="Message" Binding="{Binding Message}" Width="2*" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </GroupBox>
+                    <GroupBox Header="Per-Game Dashboards"
+                              Grid.Row="0"
+                              Grid.Column="1"
+                              Margin="8">
+                        <DataGrid ItemsSource="{Binding GameDashboards}"
+                                  AutoGenerateColumns="False"
+                                  IsReadOnly="True"
+                                  CanUserAddRows="False"
+                                  HeadersVisibility="Column"
+                                  RowHeaderWidth="0">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Game" Binding="{Binding GameId}" Width="120" />
+                                <DataGridTextColumn Header="Profile" Binding="{Binding Profile}" Width="120" />
+                                <DataGridTextColumn Header="Mods" Binding="{Binding InstalledMods}" Width="80" />
+                                <DataGridTextColumn Header="Conflicts" Binding="{Binding Conflicts}" Width="80" />
+                                <DataGridTextColumn Header="Warnings" Binding="{Binding Warnings}" Width="80" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </GroupBox>
+                    <GroupBox Header="Extension Gallery"
+                              Grid.Row="1"
+                              Grid.ColumnSpan="2"
+                              Margin="8">
+                        <DataGrid ItemsSource="{Binding ExtensionGallery}"
+                                  AutoGenerateColumns="False"
+                                  IsReadOnly="True"
+                                  CanUserAddRows="False"
+                                  HeadersVisibility="Column"
+                                  RowHeaderWidth="0">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Mod" Binding="{Binding ModId}" Width="1.2*" />
+                                <DataGridTextColumn Header="Menus" Binding="{Binding Menus}" Width="1*" />
+                                <DataGridTextColumn Header="Commands" Binding="{Binding Commands}" Width="1*" />
+                                <DataGridTextColumn Header="Themes" Binding="{Binding Themes}" Width="1*" />
+                                <DataGridTextColumn Header="Panels" Binding="{Binding Panels}" Width="1*" />
+                                <DataGridTextColumn Header="Importers" Binding="{Binding Importers}" Width="1*" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </GroupBox>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Major Platform">
+                <Grid Background="White" Margin="8">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="Major ecosystem services"
+                               FontSize="18"
+                               FontWeight="SemiBold"
+                               Foreground="#111827"
+                               Margin="0,0,0,8" />
+                    <ListBox Grid.Row="1"
+                             ItemsSource="{Binding MajorPlatformUpgrades}"
+                             BorderBrush="#D9E1EA">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}"
+                                           TextWrapping="Wrap"
+                                           Margin="6" />
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Queues">
+                <Grid Background="White">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <StackPanel Orientation="Horizontal" Margin="8">
+                        <Button Width="170" Height="34" Margin="0,0,10,0" Command="{Binding ProcessInstallQueueCommand}" Content="Process Queue" />
+                        <TextBlock VerticalAlignment="Center" Foreground="#374151" Text="download -> verify -> scan -> dependencies -> install -> rollback record" />
+                    </StackPanel>
+                    <DataGrid Grid.Row="1"
+                              ItemsSource="{Binding InstallQueue}"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              CanUserAddRows="False"
+                              Background="White"
+                              RowHeaderWidth="0">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Source" Binding="{Binding Source}" Width="3*" />
+                            <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="120" />
+                            <DataGridTextColumn Header="Attempts" Binding="{Binding Attempts}" Width="90" />
+                            <DataGridTextColumn Header="Last Error" Binding="{Binding LastError}" Width="2*" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Rollback">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <DataGrid ItemsSource="{Binding RollbackHistory}"
+                              SelectedItem="{Binding SelectedRollbackEntry, Mode=TwoWay}"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              CanUserAddRows="False"
+                              Background="White"
+                              RowHeaderWidth="0">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Mod" Binding="{Binding Id}" Width="1.2*" />
+                            <DataGridTextColumn Header="Version" Binding="{Binding Version}" Width="120" />
+                            <DataGridTextColumn Header="Installed" Binding="{Binding InstalledAt}" Width="180" />
+                            <DataGridTextColumn Header="Package" Binding="{Binding PackagePath}" Width="3*" />
+                            <DataGridTextColumn Header="Hash" Binding="{Binding Sha256}" Width="2*" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <Button Grid.Row="1"
+                            Width="150"
+                            Height="34"
+                            Margin="8"
+                            HorizontalAlignment="Right"
+                            Command="{Binding RollbackCommand}"
+                            Content="Rollback Selected" />
+                </Grid>
+            </TabItem>
+            <TabItem Header="Risk">
+                <Grid Background="White">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <GroupBox Header="Trust Simulation" Margin="8">
+                        <ListBox ItemsSource="{Binding RiskDashboard}"
+                                 BorderBrush="#D9E1EA" />
+                    </GroupBox>
+                    <GroupBox Grid.Column="1" Header="Permission Simulator" Margin="8">
+                        <ListBox ItemsSource="{Binding PermissionSimulationReports}"
+                                 BorderBrush="#D9E1EA" />
+                    </GroupBox>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Trust Policy">
+                <Grid Background="White" Margin="8">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <ListBox ItemsSource="{Binding TrustPolicyLines}"
+                             BorderBrush="#D9E1EA" />
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,10,0,0">
+                        <Button Width="160" Height="34" Margin="0,0,10,0" Command="{Binding ToggleUnsignedPolicyCommand}" Content="Toggle Unsigned" />
+                        <Button Width="140" Height="34" Command="{Binding ResetPoliciesCommand}" Content="Reset Policies" />
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Recovery">
+                <Grid Background="White" Margin="8">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <ListBox ItemsSource="{Binding RecoveryActions}"
+                             BorderBrush="#D9E1EA" />
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,10,0,0">
+                        <Button Width="120" Height="34" Margin="0,0,10,0" Command="{Binding EnableSafeModeCommand}" Content="Safe Mode" />
+                        <Button Width="190" Height="34" Margin="0,0,10,0" Command="{Binding DisableLastChangedModsCommand}" Content="Disable Recent Mods" />
+                        <Button Width="150" Height="34" Margin="0,0,10,0" Command="{Binding ExportDiagnosticsCommand}" Content="Diagnostics" />
+                        <Button Width="130" Height="34" Command="{Binding LinkDevModCommand}" Content="Dev Link" />
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Permissions">
+                <DataGrid ItemsSource="{Binding PermissionTimeline}"
+                          AutoGenerateColumns="False"
+                          IsReadOnly="True"
+                          CanUserAddRows="False"
+                          Background="White"
+                          RowHeaderWidth="0">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Mod" Binding="{Binding ModId}" Width="1.2*" />
+                        <DataGridTextColumn Header="Version" Binding="{Binding Version}" Width="120" />
+                        <DataGridTextColumn Header="Added" Binding="{Binding AddedPermissions}" Width="2*" />
+                        <DataGridTextColumn Header="Removed" Binding="{Binding RemovedPermissions}" Width="2*" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+            <TabItem Header="Diffs">
+                <DataGrid ItemsSource="{Binding ModDiffs}"
+                          AutoGenerateColumns="False"
+                          IsReadOnly="True"
+                          CanUserAddRows="False"
+                          Background="White"
+                          RowHeaderWidth="0">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Mod" Binding="{Binding ModId}" Width="1.2*" />
+                        <DataGridTextColumn Header="From" Binding="{Binding FromVersion}" Width="110" />
+                        <DataGridTextColumn Header="To" Binding="{Binding ToVersion}" Width="110" />
+                        <DataGridTextColumn Header="Permissions" Binding="{Binding PermissionChanges}" Width="2*" />
+                        <DataGridTextColumn Header="Changelog" Binding="{Binding Changelog}" Width="2*" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+            <TabItem Header="Offline">
+                <StackPanel Background="White"
+                            Margin="12">
+                    <TextBlock Text="Offline Marketplace Cache"
+                               FontSize="18"
+                               FontWeight="SemiBold" />
+                    <TextBlock Margin="0,8,0,0"
+                               Text="Marketplace entries are cached locally by the runtime so installed mods and known updates remain visible without a network connection."
+                               TextWrapping="Wrap" />
+                    <StackPanel Orientation="Horizontal" Margin="0,16,0,0">
+                        <Button Width="120" Height="34" Margin="0,0,10,0" Command="{Binding BackupCommand}" Content="Backup" />
+                        <Button Width="120" Height="34" Command="{Binding RestoreCommand}" Content="Restore" />
+                        <Button Width="150" Height="34" Margin="10,0,0,0" Command="{Binding UploadCrashCommand}" Content="Crash Bundle" />
+                    </StackPanel>
+                </StackPanel>
+            </TabItem>
+            <TabItem Header="Account">
+                <StackPanel Background="White" Margin="12">
+                    <TextBlock Text="Account Sync"
+                               FontSize="18"
+                               FontWeight="SemiBold" />
+                    <TextBlock Margin="0,8,0,0"
+                               Text="{Binding AccountStatusMessage}"
+                               Foreground="#374151"
+                               TextWrapping="Wrap" />
+                    <TextBlock Margin="0,16,0,4" Text="Go API URL" FontWeight="SemiBold" />
+                    <TextBox Width="360" HorizontalAlignment="Left" Text="{Binding RegistryApiUrl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBlock Margin="0,12,0,4" Text="Email" FontWeight="SemiBold" />
+                    <TextBox Width="360" HorizontalAlignment="Left" Text="{Binding AccountEmail, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBlock Margin="0,12,0,4" Text="Password" FontWeight="SemiBold" />
+                    <PasswordBox Width="360" HorizontalAlignment="Left" PasswordChanged="OnAccountPasswordChanged" />
+                    <StackPanel Orientation="Horizontal" Margin="0,16,0,0">
+                        <Button Width="120" Height="34" Margin="0,0,10,0" Command="{Binding SignInCommand}" Content="Sign In" />
+                        <Button Width="120" Height="34" Margin="0,0,10,0" Command="{Binding SignOutCommand}" Content="Sign Out" />
+                        <Button Width="190" Height="34" Command="{Binding RegisterProtocolCommand}" Content="Write Protocol .reg" />
+                    </StackPanel>
+                </StackPanel>
+            </TabItem>
+            <TabItem Header="Log Search">
+                <Grid Background="White">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <TextBox Grid.Row="0"
+                             Margin="8"
+                             Height="32"
+                             Text="{Binding LogSearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <DataGrid Grid.Row="1"
+                              ItemsSource="{Binding FilteredLogEntries}"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              CanUserAddRows="False"
+                              RowHeaderWidth="0">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Time" Binding="{Binding Timestamp}" Width="160" />
+                            <DataGridTextColumn Header="Mod" Binding="{Binding ModId}" Width="140" />
+                            <DataGridTextColumn Header="Severity" Binding="{Binding Severity}" Width="100" />
+                            <DataGridTextColumn Header="Event" Binding="{Binding EventType}" Width="120" />
+                            <DataGridTextColumn Header="Message" Binding="{Binding Message}" Width="3*" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Health">
+                <DataGrid ItemsSource="{Binding Health}"
+                          AutoGenerateColumns="False"
+                          IsReadOnly="True"
+                          CanUserAddRows="False"
+                          HeadersVisibility="Column"
+                          Background="White"
+                          RowHeaderWidth="0">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Mod"
+                                            Binding="{Binding ModId}"
+                                            Width="1.2*" />
+                        <DataGridTextColumn Header="Status"
+                                            Binding="{Binding Status}"
+                                            Width="100" />
+                        <DataGridTextColumn Header="Load Time"
+                                            Binding="{Binding LoadTime}"
+                                            Width="120" />
+                        <DataGridTextColumn Header="Memory Delta"
+                                            Binding="{Binding MemoryDeltaBytes}"
+                                            Width="130" />
+                        <DataGridTextColumn Header="Services"
+                                            Binding="{Binding ServicesUsed}"
+                                            Width="1.8*" />
+                        <DataGridTextColumn Header="Enabled For"
+                                            Binding="{Binding EnabledDuration}"
+                                            Width="120" />
+                        <DataGridTextColumn Header="Last Error"
+                                            Binding="{Binding LastError}"
+                                            Width="2*" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+        </TabControl>
+
+        <TextBlock Grid.Row="3"
+                   Margin="0,14,0,0"
+                   Foreground="#4B5563"
+                   TextWrapping="Wrap">
+            <Run Text="Edit " />
+            <Run Text="content-config.json" FontWeight="SemiBold" />
+            <Run Text=" to activate module IDs, then place matching .manifest/.manifest.json or .dll files in the " />
+            <Run Text="Modules" FontWeight="SemiBold" />
+            <Run Text=" folder. Place code mods implementing IMod in the " />
+            <Run Text="Mods" FontWeight="SemiBold" />
+            <Run Text=" folder and refresh." />
+            <LineBreak />
+            <Run Text="{Binding ImportStatusMessage}" />
+        </TextBlock>
+    </Grid>
+</Window>

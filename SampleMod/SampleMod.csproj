@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\TheUnlocker\TheUnlocker.csproj" />
+    <ProjectReference Include="..\TheUnlocker.Modding.Abstractions\TheUnlocker.Modding.Abstractions.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="mod.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+</Project>

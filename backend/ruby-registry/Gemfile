@@ -1,0 +1,11 @@
+source "https://rubygems.org"
+
+gem "sinatra", "~> 4.2"
+gem "puma", "~> 7.1"
+gem "redis", "~> 5.4"
+gem "mongo", "~> 2.22"
+gem "rackup", "~> 2.2"
+
+gem "bcrypt", "~> 3.1"
+
+gem "bigdecimal", "~> 4.1"
