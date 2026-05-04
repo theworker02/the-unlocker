@@ -1,7 +1,5 @@
 # The Unlocker
 
-[![CI](https://github.com/theunlocker/theunlocker/actions/workflows/dotnet-ci.yml/badge.svg)](https://github.com/theunlocker/theunlocker/actions/workflows/dotnet-ci.yml)
-[![Release](https://github.com/theunlocker/theunlocker/actions/workflows/release.yml/badge.svg)](https://github.com/theunlocker/theunlocker/actions/workflows/release.yml)
 [![Version](https://img.shields.io/badge/Version-1.1.2-0F766E)](ROADMAP.md)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![.NET](https://img.shields.io/badge/.NET-8.0-512BD4?logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
