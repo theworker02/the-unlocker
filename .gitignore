@@ -6,6 +6,7 @@ publish/
 out/
 TestResults/
 BenchmarkDotNet.Artifacts/
+/deploy/
 
 # .NET local state
 .vs/
